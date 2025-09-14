@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Girasol Animado</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(to bottom, #1a237e 0%, #283593 40%, #3949ab 100%);
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+        }
+        
+        .container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        
+        .header {
+            position: absolute;
+            top: 20px;
+            color: white;
+            font-size: 24px;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+            z-index: 10;
+        }
+        
+        .sunflower {
+            position: relative;
+            width: 400px;
+            height: 600px;
+        }
+        
+        .stem {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 300px;
+            background: linear-gradient(to right, #2e7d32, #4caf50, #81c784);
+            border-radius: 10px;
+            z-index: 1;
+        }
+        
+        .leaf {
+            position: absolute;
+            bottom: 120px;
+            left: 50%;
+            width: 80px;
+            height: 40px;
+            background-color: #4caf50;
+            border-radius: 0 40px 40px 0;
+            transform: rotate(-20deg);
+            transform-origin: left center;
+            z-index: 1;
+        }
+        
+        .center {
+            position: absolute;
+            top: 150px;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            background-color: #5d4037;
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            z-index: 3;
+        }
+        
+        .petals-container {
+            position: absolute;
+            top: 150px;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            height: 300px;
+            z-index: 2;
+        }
+        
+        .petal {
+            position: absolute;
+            width: 100px;
+            height: 40px;
+            background: linear-gradient(to bottom, #ffeb3b, #fbc02d, #f9a825);
+            border-radius: 50% 50% 50% 50%;
+            transform-origin: center center;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+        }
+        
+        .sun {
+            position: absolute;
+            top: 50px;
+            right: 50px;
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle, #ffff00 30%, #ffd600 70%);
+            border-radius: 50%;
+            box-shadow: 0 0 40px rgba(255, 255, 0, 0.8);
+            animation: sun-move 20s infinite linear;
+        }
+        
+        @keyframes sun-move {
+            0% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            25% {
+                transform: translate(-100px, 50px) rotate(90deg);
+            }
+            50% {
+                transform: translate(-200px, 0) rotate(180deg);
+            }
+            75% {
+                transform: translate(-100px, -50px) rotate(270deg);
+            }
+            100% {
+                transform: translate(0, 0) rotate(360deg);
+            }
+        }
+        
+        @keyframes follow-sun {
+            0% {
+                transform: translate(-50%, -50%) rotate(0deg);
+            }
+            25% {
+                transform: translate(-50%, -50%) rotate(15deg);
+            }
+            50% {
+                transform: translate(-50%, -50%) rotate(0deg);
+            }
+            75% {
+                transform: translate(-50%, -50%) rotate(-15deg);
+            }
+            100% {
+                transform: translate(-50%, -50%) rotate(0deg);
+            }
+        }
+        
+        .ground {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 100px;
+            background: linear-gradient(to bottom, #5d4037, #4e342e);
+            z-index: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">MUAJAJA</div>
+        <div class="sun"></div>
+        <div class="sunflower">
+            <div class="stem"></div>
+            <div class="leaf"></div>
+            <div class="center"></div>
+            <div class="petals-container" id="petals-container"></div>
+        </div>
+        <div class="ground"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const petalsContainer = document.getElementById('petals-container');
+            const numPetals = 16;
+            const petalsPerSet = 18;
+            
+            // Crear pétalos
+            for (let i = 0; i < numPetals; i++) {
+                for (let j = 0; j < petalsPerSet; j++) {
+                    const petal = document.createElement('div');
+                    petal.className = 'petal';
+                    
+                    // Calcular posición del pétalo
+                    const angle = (i * (360 / numPetals)) + (j * (10 / petalsPerSet));
+                    const distance = 120 - (j * 6);
+                    const x = Math.cos(angle * Math.PI / 180) * distance;
+                    const y = Math.sin(angle * Math.PI / 180) * distance;
+                    
+                    petal.style.left = `calc(50% + ${x}px)`;
+                    petal.style.top = `calc(50% + ${y}px)`;
+                    petal.style.transform = `rotate(${angle}deg)`;
+                    
+                    // Añadir animación para que los pétalos sigan al sol
+                    petal.style.animation = `follow-sun 20s infinite linear`;
+                    petal.style.animationDelay = `${(i * j) * 0.01}s`;
+                    
+                    petalsContainer.appendChild(petal);
+                }
+            }
+            
+            // Animación para que el girasol siga al sol
+            const sunflower = document.querySelector('.petals-container');
+            const sun = document.querySelector('.sun');
+            
+            // Simular el movimiento del sol y la respuesta del girasol
+            setInterval(() => {
+                const sunRect = sun.getBoundingClientRect();
+                const sunflowerRect = sunflower.getBoundingClientRect();
+                
+                const sunX = sunRect.left + sunRect.width / 2;
+                const sunY = sunRect.top + sunRect.height / 2;
+                
+                const sunflowerX = sunflowerRect.left + sunflowerRect.width / 2;
+                const sunflowerY = sunflowerRect.top + sunflowerRect.height / 2;
+                
+                const deltaX = sunX - sunflowerX;
+                const deltaY = sunY - sunflowerY;
+                
+                const angle = Math.atan2(deltaY, deltaX) * 180 / Math.PI;
+                
+                sunflower.style.transform = `translate(-50%, -50%) rotate(${angle}deg)`;
+            }, 100);
+        });
+    </script>
+</body>
+</html>
